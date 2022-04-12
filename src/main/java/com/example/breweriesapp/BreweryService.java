@@ -9,13 +9,12 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class BreweryService {
 
+    private static final Integer DESIRED_NUMBER_OF_TOP_CITIES = 5;
     private final FromArraysToEntityMapper fromArraysToEntityMapper;
     private final BreweriesRepo breweriesRepo;
 
@@ -23,6 +22,16 @@ public class BreweryService {
     public BreweryService(FromArraysToEntityMapper fromArraysToEntityMapper, BreweriesRepo breweriesRepo) {
         this.fromArraysToEntityMapper = fromArraysToEntityMapper;
         this.breweriesRepo = breweriesRepo;
+    }
+
+    public void run() {
+        Map<String, Integer> numbersOfBreweriesInEachState = numbersOfBreweriesInEachState();
+        Set<String> topCities = top5CitiesByCountOfBreweries(DESIRED_NUMBER_OF_TOP_CITIES);
+    }
+
+    public Set<String> top5CitiesByCountOfBreweries(int numberOfTop) {
+        Set<String> topCities = breweriesRepo.topCitiesByCountOfBreweries(numberOfTop);
+        return topCities;
     }
 
     public Map<String, Integer> numbersOfBreweriesInEachState() {
@@ -38,24 +47,26 @@ public class BreweryService {
     public void initialDataLoading() {
         if (breweriesRepo.count() > 1) {
             System.out.println("Initialize data not needed - DB is not empty.");
-            return;
-        }
-        List<String[]> strings = CsvParser.getFile();
-        List<BreweryEntity> breweryEntities = strings
-                .stream()
-                .map(fromArraysToEntityMapper::map).toList();
+            run();
+        } else {
+            List<String[]> strings = CsvParser.getFile();
+            List<BreweryEntity> breweryEntities = strings
+                    .stream()
+                    .map(fromArraysToEntityMapper::map).toList();
 
-        Long manualId = 1L;
-        for (BreweryEntity breweryEntity : breweryEntities) {
-            List<WorkingDay> hours = breweryEntity.getHours();
-            for (WorkingDay day : hours) {
-                day.setId(manualId);
-                day.setOwnedBreweryEntity(breweryEntity);
-                manualId++;
+            Long manualId = 1L;
+            for (BreweryEntity breweryEntity : breweryEntities) {
+                List<WorkingDay> hours = breweryEntity.getHours();
+                for (WorkingDay day : hours) {
+                    day.setId(manualId);
+                    day.setOwnedBreweryEntity(breweryEntity);
+                    manualId++;
+                }
             }
+            System.out.println("Data started to loading to DB...");
+            breweriesRepo.saveAll(breweryEntities);
+            System.out.println("Data loaded to DB!");
+            run();
         }
-        System.out.println("Data started to loading to DB...");
-        breweriesRepo.saveAll(breweryEntities);
-        System.out.println("Data loaded to DB!");
     }
 }

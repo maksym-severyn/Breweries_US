@@ -49,7 +49,5 @@ public class BreweryEntity {
     private String twitter;
     @Column(name = COLUMN_PREFIX + "websites")
     private String websites;
-    @Column(name = COLUMN_PREFIX + "state")
-    private String state;
 
 }
