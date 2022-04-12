@@ -1,0 +1,1 @@
+docker run -p 0.0.0.0:3307:3306 --name breweries -e MYSQL_ROOT_PASSWORD=toor -e MYSQL_DATABASE=breweries_db -d mysql
