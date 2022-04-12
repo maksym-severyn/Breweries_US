@@ -40,6 +40,7 @@ public class CsvParser {
     public static List<String[]> oneByOne(Reader reader) throws IOException, CsvException {
         List<String[]> list = new LinkedList<>();
         CSVReader csvReader = new CSVReader(reader);
+        csvReader.skip(1);
         String[] line;
         while ((line = csvReader.readNext()) != null) {
             list.add(line);
