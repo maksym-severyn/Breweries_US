@@ -26,11 +26,17 @@ public class BreweryService {
 
     public void run() {
         Map<String, Integer> numbersOfBreweriesInEachState = numbersOfBreweriesInEachState();
-        Set<String> topCities = top5CitiesByCountOfBreweries(DESIRED_NUMBER_OF_TOP_CITIES);
+        List<String> topCities = topCitiesByCountOfBreweries(DESIRED_NUMBER_OF_TOP_CITIES);
+        Long countOfBreweriesWithWebsiteLinks = countAllByWebsitesExists();
     }
 
-    public Set<String> top5CitiesByCountOfBreweries(int numberOfTop) {
-        Set<String> topCities = breweriesRepo.topCitiesByCountOfBreweries(numberOfTop);
+    public Long countAllByWebsitesExists() {
+        Long countAllByWebsitesExists = breweriesRepo.countAllByWebsitesNotNull();
+        return countAllByWebsitesExists;
+    }
+
+    public List<String> topCitiesByCountOfBreweries(int numberOfTop) {
+        List<String> topCities = breweriesRepo.topCitiesByCountOfBreweries(numberOfTop);
         return topCities;
     }
 

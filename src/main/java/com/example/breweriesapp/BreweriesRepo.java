@@ -28,5 +28,7 @@ public interface BreweriesRepo extends JpaRepository<BreweryEntity, String> {
             "group by b_city\n" +
             "order by count(b_id) desc limit :top_number",
             nativeQuery = true)
-    Set<String> topCitiesByCountOfBreweries(@Param("top_number") Integer numberOfTop);
+    List<String> topCitiesByCountOfBreweries(@Param("top_number") Integer numberOfTop);
+
+    Long countAllByWebsitesNotNull();
 }
