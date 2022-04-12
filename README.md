@@ -1,3 +1,3 @@
-# Beweries_US
+# Breweries_US
 
 Statistics on breweries in the USA
