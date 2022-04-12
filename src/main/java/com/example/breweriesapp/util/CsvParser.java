@@ -37,7 +37,7 @@ public class CsvParser {
         return parsedFile;
     }
 
-    public static List<String[]> oneByOne(Reader reader) throws IOException, CsvException {
+    private static List<String[]> oneByOne(Reader reader) throws IOException, CsvException {
         List<String[]> list = new LinkedList<>();
         CSVReader csvReader = new CSVReader(reader);
         csvReader.skip(1);

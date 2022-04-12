@@ -9,7 +9,9 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BreweryService {
@@ -21,6 +23,15 @@ public class BreweryService {
     public BreweryService(FromArraysToEntityMapper fromArraysToEntityMapper, BreweriesRepo breweriesRepo) {
         this.fromArraysToEntityMapper = fromArraysToEntityMapper;
         this.breweriesRepo = breweriesRepo;
+    }
+
+    public Map<String, Integer> numbersOfBreweriesInEachState() {
+        List<Object[]> stringIntegerMap = breweriesRepo.numbersOfBreweriesInEachState();
+        Map<String, Integer> numbersOfBreweriesInEachState = new HashMap<>();
+        for (Object[] row : stringIntegerMap){
+            numbersOfBreweriesInEachState.put(row[0].toString(), Integer.valueOf(row[1].toString()));
+        }
+        return numbersOfBreweriesInEachState;
     }
 
     @EventListener(ApplicationReadyEvent.class)
