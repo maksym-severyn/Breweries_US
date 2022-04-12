@@ -28,11 +28,16 @@ public class BreweryService {
         Map<String, Integer> numbersOfBreweriesInEachState = numbersOfBreweriesInEachState();
         List<String> topCities = topCitiesByCountOfBreweries(DESIRED_NUMBER_OF_TOP_CITIES);
         Long countOfBreweriesWithWebsiteLinks = countAllByWebsitesExists();
+        Long countBreweriesLocatedInDelawareAndOfferTacos = countBreweriesLocatedInDelawareAndOfferTacos();
+        Map<String, String> stringDoubleMap = percentageBreweriesOffersWineByState();
     }
 
-    public Long countAllByWebsitesExists() {
-        Long countAllByWebsitesExists = breweriesRepo.countAllByWebsitesNotNull();
-        return countAllByWebsitesExists;
+
+    public Map<String, Integer> numbersOfBreweriesInEachState() {
+        Map<String, Integer> numbersOfBreweriesInEachState = new HashMap<>();
+        breweriesRepo.numbersOfBreweriesInEachState()
+                .forEach(row -> numbersOfBreweriesInEachState.put(row[0].toString(), Integer.valueOf(row[1].toString())));
+        return numbersOfBreweriesInEachState;
     }
 
     public List<String> topCitiesByCountOfBreweries(int numberOfTop) {
@@ -40,13 +45,21 @@ public class BreweryService {
         return topCities;
     }
 
-    public Map<String, Integer> numbersOfBreweriesInEachState() {
-        List<Object[]> stringIntegerMap = breweriesRepo.numbersOfBreweriesInEachState();
-        Map<String, Integer> numbersOfBreweriesInEachState = new HashMap<>();
-        for (Object[] row : stringIntegerMap){
-            numbersOfBreweriesInEachState.put(row[0].toString(), Integer.valueOf(row[1].toString()));
-        }
-        return numbersOfBreweriesInEachState;
+    public Long countAllByWebsitesExists() {
+        Long countAllByWebsitesExists = breweriesRepo.countAllByWebsitesNotNull();
+        return countAllByWebsitesExists;
+    }
+
+    public Long countBreweriesLocatedInDelawareAndOfferTacos() {
+        Long countBreweriesLocatedInDelawareAndOfferTacos = breweriesRepo.countBreweriesLocatedInDelawareAndOfferTacos();
+        return countBreweriesLocatedInDelawareAndOfferTacos;
+    }
+
+    public Map<String, String> percentageBreweriesOffersWineByState() {
+        Map<String, String> percentageMapByState = new HashMap<>();
+        breweriesRepo.percentageBreweriesOffersWineByState()
+                .forEach(stateRow -> percentageMapByState.put(stateRow[0], (stateRow[3] + '%')));
+        return percentageMapByState;
     }
 
     @EventListener(ApplicationReadyEvent.class)
