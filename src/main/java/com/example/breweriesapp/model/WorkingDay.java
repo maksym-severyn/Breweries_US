@@ -17,11 +17,13 @@ public class WorkingDay {
     public static final String COLUMN_PREFIX = "wd_";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = COLUMN_PREFIX + "id")
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "brewery_entity_id")
-    private BreweryEntity breweryEntity;
+    @JoinColumn(name = "owned_brewery_entity_id")
+    private BreweryEntity ownedBreweryEntity;
+    @Column(name = COLUMN_PREFIX + "hour")
     private String hour;
+    @Column(name = COLUMN_PREFIX + "day")
     private String day;
 }

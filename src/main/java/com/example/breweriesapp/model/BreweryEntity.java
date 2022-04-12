@@ -29,8 +29,7 @@ public class BreweryEntity {
     private String city;
     @Column(name = COLUMN_PREFIX + "country")
     private String country;
-    @Column(name = COLUMN_PREFIX + "hours")
-    @OneToMany(mappedBy = "breweryEntity", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ownedBreweryEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WorkingDay> hours;
     @Column(name = COLUMN_PREFIX + "keys")
     private String keys;
@@ -52,6 +51,5 @@ public class BreweryEntity {
     private String websites;
     @Column(name = COLUMN_PREFIX + "state")
     private String state;
-
 
 }
