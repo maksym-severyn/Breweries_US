@@ -18,7 +18,7 @@ public class FromArraysToEntityMapper {
         BreweryEntity entity = new BreweryEntity();
         entity.setId(emptyFieldConverter(fieldsInArray[0]));
         entity.setAddress(emptyFieldConverter(fieldsInArray[1]));
-        entity.setCategories(Arrays.asList(emptyFieldConverter(fieldsInArray[2]).split(",")));
+        entity.setCategories(Arrays.asList(fieldsInArray[2].split(",")));
         entity.setCity(emptyFieldConverter(fieldsInArray[3]));
         entity.setCountry(emptyFieldConverter(fieldsInArray[4]));
         try {

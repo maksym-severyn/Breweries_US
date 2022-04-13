@@ -4,37 +4,15 @@ import com.example.breweriesapp.mapper.FromArraysToEntityMapper;
 import com.example.breweriesapp.model.BreweryEntity;
 import com.example.breweriesapp.model.WorkingDay;
 import com.example.breweriesapp.util.CsvParser;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
-public class BreweryService {
-
-    private static final Integer DESIRED_NUMBER_OF_TOP_CITIES = 5;
-    private final FromArraysToEntityMapper fromArraysToEntityMapper;
-    private final BreweriesRepo breweriesRepo;
-
-    @Autowired
-    public BreweryService(FromArraysToEntityMapper fromArraysToEntityMapper, BreweriesRepo breweriesRepo) {
-        this.fromArraysToEntityMapper = fromArraysToEntityMapper;
-        this.breweriesRepo = breweriesRepo;
-    }
-
-    @EventListener(ApplicationReadyEvent.class)
-    public void run() {
-        initialDataLoading();
-        Map<String, Integer> numbersOfBreweriesInEachState = getNumbersOfBreweriesInEachState();
-        List<String> topCities = getTopCitiesByCountOfBreweries(DESIRED_NUMBER_OF_TOP_CITIES);
-        Long countOfBreweriesWithWebsiteLinks = countAllByWebsitesExists();
-        Long countBreweriesLocatedInDelawareAndOfferTacos = countBreweriesLocatedInDelawareAndOfferTacos();
-        Map<String, String> percentageBreweriesOffersWineByState = getPercentageBreweriesOffersWineByState();
-        Integer duplicatedBreweries = countDuplicatedBreweries();
-    }
-
+public record BreweryService(FromArraysToEntityMapper fromArraysToEntityMapper,
+                             BreweriesRepo breweriesRepo) {
 
     public Map<String, Integer> getNumbersOfBreweriesInEachState() {
         Map<String, Integer> numbersOfBreweriesInEachState = new HashMap<>();
@@ -44,24 +22,21 @@ public class BreweryService {
     }
 
     public List<String> getTopCitiesByCountOfBreweries(int numberOfTop) {
-        List<String> topCities = breweriesRepo.topCitiesByCountOfBreweries(numberOfTop);
-        return topCities;
+        return breweriesRepo.topCitiesByCountOfBreweries(numberOfTop);
     }
 
     public Long countAllByWebsitesExists() {
-        Long countAllByWebsitesExists = breweriesRepo.countAllByWebsitesNotNull();
-        return countAllByWebsitesExists;
+        return breweriesRepo.countAllByWebsitesNotNull();
     }
 
     public Long countBreweriesLocatedInDelawareAndOfferTacos() {
-        Long countBreweriesLocatedInDelawareAndOfferTacos = breweriesRepo.countBreweriesLocatedInDelawareAndOfferTacos();
-        return countBreweriesLocatedInDelawareAndOfferTacos;
+        return breweriesRepo.countBreweriesLocatedInDelawareAndOfferTacos();
     }
 
     public Map<String, String> getPercentageBreweriesOffersWineByState() {
         Map<String, String> percentageMapByState = new HashMap<>();
         breweriesRepo.percentageBreweriesOffersWineByState()
-                .forEach(stateRow -> percentageMapByState.put(stateRow[0], (stateRow[3] + '%')));
+                .forEach(stateRow -> percentageMapByState.put(stateRow[0], (stateRow[3])));
         return percentageMapByState;
     }
 
@@ -70,9 +45,10 @@ public class BreweryService {
     }
 
     public void initialDataLoading() {
-        if (breweriesRepo.count() > 1) {
+        if (breweriesRepo.count() > 0) {
             System.out.println("Initialize data not needed - DB is not empty!");
         } else {
+            System.out.println("Data getting from CSV...");
             List<String[]> strings = CsvParser.getFile();
             List<BreweryEntity> breweryEntities = strings
                     .stream()
@@ -87,7 +63,7 @@ public class BreweryService {
                     manualId++;
                 }
             }
-            System.out.println("Data started to loading to DB...");
+            System.out.println("Data started to loading to DB, please wait... The first initialization may take longer");
             breweriesRepo.saveAll(breweryEntities);
             System.out.println("Data loaded to DB!");
         }
