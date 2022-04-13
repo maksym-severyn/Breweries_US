@@ -1,5 +1,6 @@
 package com.example.breweriesapp;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -8,12 +9,18 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public record BreweryDisplay(BreweryService breweryService) {
+public class BreweryDisplay {
 
+    private final BreweryService breweryService;
     private static final String VIEW_SEPARATOR_BOLD = "=======================================================================";
     private static final String VIEW_SEPARATOR_THIN = "------------------------------";
     private static final String VIEW_SEPARATOR_SMALL = " ----- ";
     private static final Integer DESIRED_NUMBER_OF_TOP_CITIES = 5;
+
+    @Autowired
+    public BreweryDisplay(BreweryService breweryService) {
+        this.breweryService = breweryService;
+    }
 
     @EventListener(ApplicationReadyEvent.class)
     public void run() {

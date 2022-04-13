@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 @Component
 public class FromArraysToEntityMapper {
 
@@ -44,7 +45,8 @@ public class FromArraysToEntityMapper {
         if (flatJsonRecord == null || flatJsonRecord.isEmpty()) {
             return Collections.emptyList();
         }
-        return om.readValue(flatJsonRecord, new TypeReference<ArrayList<WorkingDay>>() {});
+        return om.readValue(flatJsonRecord, new TypeReference<ArrayList<WorkingDay>>() {
+        });
     }
 
     private String emptyFieldConverter(String originalString) {

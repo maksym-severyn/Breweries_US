@@ -11,8 +11,15 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public record BreweryService(FromArraysToEntityMapper fromArraysToEntityMapper,
-                             BreweriesRepo breweriesRepo) {
+public class BreweryService {
+
+    private final FromArraysToEntityMapper fromArraysToEntityMapper;
+    private final BreweriesRepo breweriesRepo;
+
+    public BreweryService(FromArraysToEntityMapper fromArraysToEntityMapper, BreweriesRepo breweriesRepo) {
+        this.fromArraysToEntityMapper = fromArraysToEntityMapper;
+        this.breweriesRepo = breweriesRepo;
+    }
 
     public Map<String, Integer> getNumbersOfBreweriesInEachState() {
         Map<String, Integer> numbersOfBreweriesInEachState = new HashMap<>();
