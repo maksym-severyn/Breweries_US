@@ -44,15 +44,15 @@ public interface BreweriesRepo extends JpaRepository<BreweryEntity, String> {
 
     @Query(value = """
                 select distinct
-                                s.name as state_global,
-                                count(b.b_name) as count_of_breweries,
-                                sum(case when b.b_menus like '%Wine%' then 1
-                                         when b.b_menus like '%wine%' then 1 else 0 end
-                                    ) as breweries_offer_wine,
-                                (sum(case when b.b_menus like '%Wine%' then 1
-                                          when b.b_menus like '%wine%' then 1
-                                          else 0 end)
-                                / count(b.b_name))*100 as percentage
+                s.name as state_global,
+                count(b.b_name) as count_of_breweries,
+                sum(case when b.b_menus like '%Wine%' then 1
+                         when b.b_menus like '%wine%' then 1 else 0 end
+                    ) as breweries_offer_wine,
+                (sum(case when b.b_menus like '%Wine%' then 1
+                          when b.b_menus like '%wine%' then 1
+                          else 0 end)
+                / count(b.b_name))*100 as percentage
                 from brewery_entity b
                          left join cities on cities.name = b.b_city
                          left join states s on cities.state_id = s.id
@@ -63,4 +63,9 @@ public interface BreweriesRepo extends JpaRepository<BreweryEntity, String> {
             nativeQuery = true)
     List<String[]> percentageBreweriesOffersWineByState();
 
+    @Query(value = """
+                select b_id from brewery_entity group by b_id having count(b_id) > 1;
+            """,
+            nativeQuery = true)
+    List<String> findDuplicatedBreweries();
 }
