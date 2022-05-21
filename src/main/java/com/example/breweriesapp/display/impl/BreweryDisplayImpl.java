@@ -1,5 +1,7 @@
-package com.example.breweriesapp;
+package com.example.breweriesapp.display.impl;
 
+import com.example.breweriesapp.display.BreweryDisplay;
+import com.example.breweriesapp.service.BreweryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -9,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class BreweryDisplay {
+class BreweryDisplayImpl implements BreweryDisplay {
 
     private final BreweryService breweryService;
     private static final String VIEW_SEPARATOR_BOLD = "=======================================================================";
@@ -18,7 +20,7 @@ public class BreweryDisplay {
     private static final Integer DESIRED_NUMBER_OF_TOP_CITIES = 5;
 
     @Autowired
-    public BreweryDisplay(BreweryService breweryService) {
+    public BreweryDisplayImpl(BreweryService breweryService) {
         this.breweryService = breweryService;
     }
 

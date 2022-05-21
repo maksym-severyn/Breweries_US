@@ -1,8 +1,10 @@
-package com.example.breweriesapp;
+package com.example.breweriesapp.service.impl;
 
+import com.example.breweriesapp.BreweriesRepo;
 import com.example.breweriesapp.mapper.FromArraysToEntityMapper;
 import com.example.breweriesapp.model.BreweryEntity;
 import com.example.breweriesapp.model.WorkingDay;
+import com.example.breweriesapp.service.BreweryService;
 import com.example.breweriesapp.util.CsvParser;
 import org.springframework.stereotype.Service;
 
@@ -13,16 +15,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Service
-public class BreweryService {
+class BreweryServiceImpl implements BreweryService {
 
     private final FromArraysToEntityMapper fromArraysToEntityMapper;
     private final BreweriesRepo breweriesRepo;
 
-    public BreweryService(FromArraysToEntityMapper fromArraysToEntityMapper, BreweriesRepo breweriesRepo) {
+    public BreweryServiceImpl(FromArraysToEntityMapper fromArraysToEntityMapper, BreweriesRepo breweriesRepo) {
         this.fromArraysToEntityMapper = fromArraysToEntityMapper;
         this.breweriesRepo = breweriesRepo;
     }
 
+    @Override
     public Map<String, Integer> getNumbersOfBreweriesInEachState() {
         Map<String, Integer> numbersOfBreweriesInEachState = new HashMap<>();
         breweriesRepo.numbersOfBreweriesInEachState()
@@ -30,18 +33,22 @@ public class BreweryService {
         return numbersOfBreweriesInEachState;
     }
 
+    @Override
     public List<String> getTopCitiesByCountOfBreweries(int numberOfTop) {
         return breweriesRepo.topCitiesByCountOfBreweries(numberOfTop);
     }
 
+    @Override
     public Long countAllByWebsitesExists() {
         return breweriesRepo.countAllByWebsitesNotNull();
     }
 
+    @Override
     public Long countBreweriesLocatedInDelawareAndOfferTacos() {
         return breweriesRepo.countBreweriesLocatedInDelawareAndOfferTacos();
     }
 
+    @Override
     public Map<String, String> getPercentageBreweriesOffersWineByState() {
         Map<String, String> percentageMapByState = new HashMap<>();
         breweriesRepo.percentageBreweriesOffersWineByState()
@@ -49,10 +56,12 @@ public class BreweryService {
         return percentageMapByState;
     }
 
+    @Override
     public Integer countDuplicatedBreweries() {
         return breweriesRepo.findDuplicatedBreweries().size();
     }
 
+    @Override
     public void initialDataLoading() {
         if (breweriesRepo.count() < 1) {
             System.out.println("Initialize data not needed - DB is not empty!");

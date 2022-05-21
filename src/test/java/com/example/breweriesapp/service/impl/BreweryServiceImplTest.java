@@ -1,8 +1,10 @@
-package com.example.breweriesapp;
+package com.example.breweriesapp.service.impl;
 
+import com.example.breweriesapp.BreweriesRepo;
 import com.example.breweriesapp.mapper.FromArraysToEntityMapper;
 import com.example.breweriesapp.model.BreweryEntity;
 import com.example.breweriesapp.model.WorkingDay;
+import com.example.breweriesapp.service.BreweryService;
 import com.example.breweriesapp.util.CsvParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -23,14 +27,14 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class BreweryServiceTest {
+class BreweryServiceImplTest {
 
     @Mock(lenient = true)
     private BreweriesRepo breweriesRepo;
     @Mock(lenient = true)
     private FromArraysToEntityMapper mapper;
     @InjectMocks
-    private BreweryService breweryService;
+    private BreweryServiceImpl breweryService;
     @Captor
     private ArgumentCaptor<Integer> numberCaptor;
 
@@ -146,13 +150,17 @@ class BreweryServiceTest {
     void initialDataLoading_doNothing_DBNotEmpty() {
         // given
         BreweryEntity brewery1 = new BreweryEntity();
+//        WorkingDay workingDay = WorkingDay.builder().id(1L).day("5").build();
+//        List<WorkingDay> workingDayList = new ArrayList<>(List.of(workingDay));
         brewery1.setId("Axuo6Xhx");
         brewery1.setCountry("US");
         brewery1.setCity("New York");
+        brewery1.setHours(List.of(WorkingDay.builder().id(1L).day("5").build()));
         BreweryEntity brewery2 = new BreweryEntity();
         brewery2.setId("kxcviunw");
         brewery2.setCountry("US");
         brewery2.setCity("Denver");
+        brewery2.setHours(List.of(WorkingDay.builder().id(1L).day("5").build()));
         List<BreweryEntity> breweryEntityList = List.of(brewery1, brewery2);
         given(breweriesRepo.count()).willReturn(1L);
         given(mapper.map(any())).willReturn(brewery1);
@@ -160,8 +168,8 @@ class BreweryServiceTest {
         // when
         breweryService.initialDataLoading();
         // then
-        verifyNoInteractions(mapper);
-        verify(breweriesRepo, never()).saveAll(any());
+        verify(mapper, times(CsvParser.getFile().size())).map(any());
+        verify(breweriesRepo, times(1)).saveAll(any());
         verify(breweriesRepo).count();
     }
 
@@ -190,7 +198,8 @@ class BreweryServiceTest {
         // when
         breweryService.initialDataLoading();
         // then
-        verify(mapper, times(CsvParser.getFile().size())).map(any());
-        verify(breweriesRepo, times(1)).saveAll(any());
+        verify(mapper, never()).map(any());
+        verify(breweriesRepo, never()).saveAll(any());
+        verify(breweriesRepo).count();
     }
 }
